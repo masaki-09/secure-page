@@ -6,6 +6,10 @@ body {
     color: #333;
     padding: 20px;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 /* --- コンテナ --- */
@@ -14,18 +18,14 @@ body {
     padding: 40px 50px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
     width: 100%;
-    margin: 20px auto;
     text-align: center;
 }
-
+.container {
+    max-width: 900px;
+}
 .login-container {
     max-width: 400px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 h1 {
@@ -92,8 +92,9 @@ tr:nth-child(even) {
     background-color: #f8f9fa;
 }
 
-/* ▼▼▼ この部分を追加しました ▼▼▼ */
-/* 「内容」の列（4番目のセル）だけ左揃えにする */
+/* ▼▼▼ この部分を修正しました ▼▼▼ */
+/* 「内容」の列（ヘッダーとセルの両方）を左揃えにする */
+#schedule-table th:nth-child(4),
 #schedule-table td:nth-child(4) {
     text-align: left;
 }
