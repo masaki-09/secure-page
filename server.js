@@ -3,28 +3,31 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
-// ★ ここにあった const PORT = 3000; は削除しました
+const PORT = process.env.PORT || 3000;
 
-// フォームから送信されたデータを解析するための設定
 app.use(express.urlencoded({ extended: true }));
 
-// セッション（ログイン状態の記憶）を使うための設定
-app.set('trust proxy', 1); // ★ この行を追加！
+// プロキシサーバーを信頼する設定
+app.set('trust proxy', 1); 
+
+// セッションの設定
 app.use(session({
-    secret: 'kagawa-kosen-2025',
+    secret: 'kagawa-kosen-2025-very-secret', // より複雑な秘密鍵に変更
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // 変更がないセッションは保存しない
     cookie: { 
-        secure: true, // ★ RenderはHTTPSなのでtrueに変更
-        sameSite: 'none' // ★ この行を追加
+        secure: true, // HTTPSでのみCookieを送信
+        sameSite: 'lax' // クロスサイトリクエストに対してのセキュリティ設定
     }
 }));
 
-// publicフォルダを静的ファイル（CSS, JSなど）の置き場所として指定
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ログイン状態をチェックする関数
+// ログイン状態をチェックする関数（診断コード追加）
 function checkAuth(req, res, next) {
+    // ★ 診断ログ：リクエストごとにセッションの中身を確認
+    console.log('Auth Check on:', req.path, '| Session loggedIn:', req.session.loggedIn);
+
     if (req.session.loggedIn) {
         next();
     } else {
@@ -32,27 +35,43 @@ function checkAuth(req, res, next) {
     }
 }
 
-// ルートURL ("/") にアクセスがあった時の処理
+// ログインページ
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// パスワードが送信された時 ("/login") の処理
+// ログイン処理（診断コード追加）
 app.post('/login', (req, res) => {
-    // ★ パスワードはここで設定します
     const CORRECT_PASSWORD = 'test';
     const { password } = req.body;
 
     if (password === CORRECT_PASSWORD) {
+        // ★ 診断ログ：パスワードが正しいことを確認
+        console.log('Password correct. Setting session...');
         req.session.loggedIn = true;
-        res.redirect('/timetable');
+        
+        req.session.save((err) => {
+            if (err) {
+                // ★ 診断ログ：セッション保存に失敗した場合
+                console.error('Session save error:', err);
+                return res.redirect('/');
+            }
+            // ★ 診断ログ：セッション保存が成功したことを確認
+            console.log('Session saved. Redirecting to timetable...');
+            res.redirect('/timetable');
+        });
     } else {
+        // ★ 診断ログ：パスワードが間違っていた場合
+        console.log('Password incorrect.');
         res.redirect('/');
     }
 });
 
-// タイムテーブルページ ("/timetable") の処理
+// タイムテーブルページ
 app.get('/timetable', checkAuth, (req, res) => {
+    // ★ 診断ログ：タイムテーブルページへのアクセスが成功したことを確認
+    console.log('Successfully accessed timetable page.');
+    
     res.send(`
         <!DOCTYPE html>
         <html lang="ja">
@@ -82,10 +101,7 @@ app.get('/timetable', checkAuth, (req, res) => {
     `);
 });
 
-// サーバーを起動
-// ★ PORTの宣言は、ここに1つだけ残します
-const PORT = process.env.PORT || 3000;
-
+// サーバー起動
 app.listen(PORT, () => {
     console.log(`サーバーがポート ${PORT} で起動しました`);
 });
