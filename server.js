@@ -9,10 +9,15 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 // セッション（ログイン状態の記憶）を使うための設定
+app.set('trust proxy', 1); // ★ この行を追加！
 app.use(session({
     secret: 'kagawa-kosen-2025',
     resave: false,
     saveUninitialized: true,
+    cookie: { 
+        secure: true, // ★ RenderはHTTPSなのでtrueに変更
+        sameSite: 'none' // ★ この行を追加
+    }
 }));
 
 // publicフォルダを静的ファイル（CSS, JSなど）の置き場所として指定
