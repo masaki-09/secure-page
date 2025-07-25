@@ -33,6 +33,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+    // Safe log: records that a login was attempted without logging the password.
+    console.log(`Login attempt received at: ${new Date().toISOString()}`);
+
     const CORRECT_PASSWORD = '200910081842masaki';
     const { password } = req.body;
 
@@ -46,8 +49,7 @@ app.post('/login', (req, res) => {
     }
 });
 
-// ▼▼▼ この中のHTMLを新しいデザインに変更しました ▼▼▼
-app.get('/timetable', checkAuth, (req, res) => {
+app.get('/timetable', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html lang="ja">
@@ -55,28 +57,22 @@ app.get('/timetable', checkAuth, (req, res) => {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="/style.css">
-            <title>高専カンファ タイムテーブル</title>
-            <link rel="icon" href="https://my-masaki.com/pomodorotime/favicon.png" type="image/png">
+            <title>高専カンファタイムテーブル</title>
         </head>
         <body>
-            <div class="container">
-                <h1>24sカンファ 登壇タイムテーブル</h1>
-                <button id="update-button">更新</button>
-                <div class="table-container">
-                    <table id="schedule-table">
-                        <thead>
-                        <tr>
-                            <th>開始時刻</th>
-                            <th>終了時刻</th>
-                            <th>登壇者</th>
-                            <th>内容</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <h1>24sカンファ登壇タイムテーブル</h1>
+            <button id="update-button">更新</button>
+            <table border="1" id="schedule-table">
+                <thead>
+                <tr>
+                    <th>開始時刻</th>
+                    <th>終了時刻</th>
+                    <th>登壇者</th>
+                    <th>内容</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
             <script src="/script.js"></script>
         </body>
         </html>
