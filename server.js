@@ -3,53 +3,51 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
-
-// ★ここに好きなパスワードを設定
-const CORRECT_PASSWORD = '200910081842masaki';
+// ★ ここにあった const PORT = 3000; は削除しました
 
 // フォームから送信されたデータを解析するための設定
 app.use(express.urlencoded({ extended: true }));
 
 // セッション（ログイン状態の記憶）を使うための設定
 app.use(session({
-    secret: 'kagawa-kosen-2025', // ★この文字列はランダムなものに変更してください
+    secret: 'kagawa-kosen-2025',
     resave: false,
     saveUninitialized: true,
 }));
 
-// publicフォルダを、CSSやJSファイルを置く場所としてサーバーに教える
+// publicフォルダを静的ファイル（CSS, JSなど）の置き場所として指定
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ログイン状態をチェックする関数
 function checkAuth(req, res, next) {
     if (req.session.loggedIn) {
-        next(); // ログイン済みなら、リクエストされた処理を続ける
+        next();
     } else {
-        res.redirect('/'); // 未ログインなら、ログインページに強制的に戻す
+        res.redirect('/');
     }
 }
 
-// 1. ログインページへのアクセスがあった時の処理
+// ルートURL ("/") にアクセスがあった時の処理
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 2. パスワードが送信された時の処理
+// パスワードが送信された時 ("/login") の処理
 app.post('/login', (req, res) => {
+    // ★ パスワードはここで設定します
+    const CORRECT_PASSWORD = 'test';
     const { password } = req.body;
+
     if (password === CORRECT_PASSWORD) {
-        req.session.loggedIn = true; // パスワードが合っていれば「ログイン済み」と記憶
-        res.redirect('/timetable'); // タイムテーブルページへ移動
+        req.session.loggedIn = true;
+        res.redirect('/timetable');
     } else {
-        res.redirect('/'); // 間違っていればログインページに戻る
+        res.redirect('/');
     }
 });
 
-// 3. タイムテーブルページへのアクセスがあった時の処理
-//    必ず checkAuth を経由するので、未ログインの人はアクセスできない
+// タイムテーブルページ ("/timetable") の処理
 app.get('/timetable', checkAuth, (req, res) => {
-    // ログイン済みの人にだけ、タイムテーブルのHTMLを送信する
     res.send(`
         <!DOCTYPE html>
         <html lang="ja">
@@ -80,7 +78,8 @@ app.get('/timetable', checkAuth, (req, res) => {
 });
 
 // サーバーを起動
-const PORT = process.env.PORT || 3000; // Renderが指定するポート、なければ3000番を使う
+// ★ PORTの宣言は、ここに1つだけ残します
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`サーバーがポート ${PORT} で起動しました`);
