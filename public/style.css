@@ -80,7 +80,7 @@ table, th, td {
 
 th, td {
     padding: 12px;
-    white-space: nowrap; /* 文字が折り返されないように */
+    white-space: nowrap;
 }
 
 th {
@@ -90,4 +90,10 @@ th {
 
 tr:nth-child(even) {
     background-color: #f8f9fa;
+}
+
+/* ▼▼▼ この部分を追加しました ▼▼▼ */
+/* 「内容」の列（4番目のセル）だけ左揃えにする */
+#schedule-table td:nth-child(4) {
+    text-align: left;
 }

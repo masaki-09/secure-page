@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const CORRECT_PASSWORD = 'test';
+    const CORRECT_PASSWORD = '200910081842masaki';
     const { password } = req.body;
 
     if (password === CORRECT_PASSWORD) {
