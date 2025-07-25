@@ -17,7 +17,7 @@ body {
     background-color: #ffffff;
     padding: 40px 50px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); /* ★変更：影を柔らかく */
     width: 100%;
     text-align: center;
 }
@@ -88,11 +88,19 @@ th {
     font-weight: bold;
 }
 
+tr {
+    transition: background-color 0.2s ease; /* ★変更：ホバー時のアニメーション */
+}
+
 tr:nth-child(even) {
     background-color: #f8f9fa;
 }
 
-/* ▼▼▼ この部分を修正しました ▼▼▼ */
+/* ★変更：ホバーエフェクトを追加 */
+tr:hover {
+    background-color: #e9ecef;
+}
+
 /* 「内容」の列（ヘッダーとセルの両方）を左揃えにする */
 #schedule-table th:nth-child(4),
 #schedule-table td:nth-child(4) {
